@@ -18,7 +18,7 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     for gid in $GASPAR_SUPG; do
         GROUP_NAME=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
         if [ ${#GROUP_NAME} -gt 32 ]; then
-            GROUP_NAME=${GROUP_NAME:0:30}
+            GROUP_NAME=$(echo "$GROUP_NAME" | cut -c 1-30)
         fi
         echo $GROUP_NAME
         if ! getent group $GROUP_NAME > /dev/null 2>&1; then
