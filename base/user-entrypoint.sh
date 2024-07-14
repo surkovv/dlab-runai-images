@@ -20,6 +20,7 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         if [ ${#GROUP_NAME} -gt 32 ]; then
             continue
         fi
+        echo $GROUP_NAME
         if ! getent group $GROUP_NAME > /dev/null 2>&1; then
             groupadd -g $gid $(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
         else
