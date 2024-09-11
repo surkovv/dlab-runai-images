@@ -89,7 +89,7 @@ if su ${GASPAR_USER} -c "[ -f '$USER_HOME/.bashrc' ]"; then
 fi
 
 if [ -z "$1" ]; then
-    exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash"
+    exec gosu ${GASPAR_USER} /bin/bash -c "exec /bin/bash"
 else
     exec gosu ${GASPAR_USER} "$@"
 fi
