@@ -18,12 +18,8 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     # Create Groups
     for gid in $GASPAR_SUPG; do
         GROUP_NAME=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
-        if [ ${#GROUP_NAME} -gt 32 ]; then
-            GROUP_NAME=$(echo "$GROUP_NAME" | tail -c 30)
-        fi
-        echo $GROUP_NAME
         if ! getent group $GROUP_NAME > /dev/null 2>&1; then
-            groupadd -g $gid $GROUP_NAME
+            groupadd -g $gid $(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
         else
             groupmod -g $gid $GROUP_NAME
         fi
@@ -91,5 +87,6 @@ fi
 if [ -z "$1" ]; then
     exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash"
 else
-    exec gosu ${GASPAR_USER} "$@"
+    echo "**** Executing '/bin/bash -c \"$*\"' ****"
+    exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash -c \"$*\""
 fi
